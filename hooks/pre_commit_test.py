@@ -5,7 +5,7 @@ output = None
 def checkHash():
     process = subprocess.run(['git','rev-parse','HEAD'], check=True, stdout=subprocess.PIPE, universal_newlines=True)
     output = process.stdout
-    print("xxx")
+    print(output)
 
 def branchNameCheck():
     process = subprocess.run(['git','rev-parse','--abbrev-ref','HEAD'], check=True, stdout=subprocess.PIPE, universal_newlines=True)
@@ -19,7 +19,7 @@ def branchNameCheck():
     if (x):
         print("YES! We have a match!")
     else:
-        print("No match")
+        print(f"No match your trying to commit on branch : {localBranch}, {valid_branch_regex} required.")
         exit(1)
 
 if __name__ == "__main__":

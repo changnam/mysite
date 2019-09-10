@@ -6,7 +6,6 @@ import distutils.spawn
 import os
 import subprocess
 import sys
-import pre_commit_test
 
 # work around https://github.com/Homebrew/homebrew-core/issues/30445
 os.environ.pop('__PYVENV_LAUNCHER__', None)
@@ -21,6 +20,12 @@ INSTALL_PYTHON = '/home/git/test/mysite/venv/bin/python3.6'
 SKIP_ON_MISSING_CONFIG = False
 # end templated
 
+(directory,file) = os.path.split(os.path.dirname(os.path.abspath(__file__)))
+(baseDirectory,tempFile) = os.path.split(directory)
+#print(os.path.join(baseDirectory,'hooks'))
+
+sys.path.append(os.path.join(baseDirectory,'hooks'))
+import pre_commit_test
 
 class EarlyExit(RuntimeError):
     pass
@@ -192,5 +197,7 @@ def main():
         return 1
 
 if __name__ == '__main__':
+
     pre_commit_test.checkHash()
+    pre_commit_test.branchNameCheck()
     exit(main())
