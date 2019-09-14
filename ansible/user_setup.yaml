@@ -1,5 +1,6 @@
 - hosts: "{{ hostname }}"
   gather_facts: false
+  #usage : ansible-playbook user_setup.yaml --extra-vars="hostname=git"
   tasks:
     - name: Make sure we have a 'wheel' group
       group:

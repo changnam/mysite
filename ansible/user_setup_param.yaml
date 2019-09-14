@@ -1,6 +1,7 @@
 - hosts: "{{ hostname }}"
   gather_facts: false
   become: true
+  #usage : ansible-playbook user_setup_param.yaml --extra-vars="hostname=git username=git"
   tasks:
     - name: create and/or change {{ username}}'s  password
       user:

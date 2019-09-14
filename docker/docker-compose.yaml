@@ -1,0 +1,15 @@
+version: '3.1'
+
+services:
+  db:
+    container_name: Mongo-db
+    image: mongo:latest
+    restart: always
+    volumes:
+      - ./myData:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=MyDatabase
+      - MONGODB_USER=Nya
+      - MONGODB_PASS=secretpassword
+    ports:
+      - 27020:27017
