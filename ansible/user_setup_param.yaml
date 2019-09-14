@@ -1,5 +1,6 @@
 - hosts: "{{ hostname }}"
   gather_facts: false
+  become: true
   tasks:
     - name: create and/or change {{ username}}'s  password
       user:
