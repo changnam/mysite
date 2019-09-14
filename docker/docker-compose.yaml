@@ -8,8 +8,8 @@ services:
     volumes:
       - ./myData:/data/db
     environment:
-      - MONGO_INITDB_DATABASE=MyDatabase
-      - MONGODB_USER=Nya
-      - MONGODB_PASS=secretpassword
+      - MONGO_INITDB_DATABASE=${DATABASE}
+      - MONGODB_USER=${USERNAME}
+      - MONGODB_PASS=${PASS}
     ports:
       - 27020:27017
