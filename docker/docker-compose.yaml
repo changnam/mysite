@@ -7,9 +7,7 @@ services:
     restart: always
     volumes:
       - ./myData:/data/db
-    environment:
-      - MONGO_INITDB_DATABASE=${DATABASE}
-      - MONGODB_USER=${USERNAME}
-      - MONGODB_PASS=${PASS}
+    env_file:
+      - ./secret-stuff.env
     ports:
       - 27020:27017
