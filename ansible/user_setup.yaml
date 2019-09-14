@@ -1,7 +1,24 @@
 - hosts: "{{ hostname }}"
   gather_facts: false
   tasks:
-    - name: create and/or change {{ username}}'s  password
-      user:
-        name: "{{ username }}"
-        password: P@ssw0rd
+    - name: Make sure we have a 'wheel' group
+      group:
+        name: wheel
+        state: present
+
+    - name: Allow 'wheel' group to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+    - name: Add sudoers users to wheel group
+      user: name=ansible groups=wheel append=yes state=present createhome=yes
+
+
+    - name: Set up authorized keys for the ansible user
+      authorized_key: user=ansible key="{{item}}"
+      with_file:
+        - /home/ansible/.ssh/id_rsa.pub
