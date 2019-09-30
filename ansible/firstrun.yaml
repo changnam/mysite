@@ -1,0 +1,28 @@
+---
+- hosts: all
+  user: root
+  become: TRUE
+  #usage: ansible-playbook -i 172.30.1.173,172.30.1.175, firstrun.yaml --user ubuntu --ask-pass --ask-become-pass
+  tasks:
+  - name: Ensure ansible user exists
+    user:
+      name: ansible
+      state: present
+      home: /home/ansible
+      shell: /bin/bash
+      comment: Ansible
+
+  - name: Ensure ansible user accepts the SSH key
+    authorized_key:
+      user: ansible
+      #key: https://github.com/fale.keys
+      key: "{{ lookup('file', '/home/ansible/.ssh/id_rsa.pub') }}"
+      state: present
+
+  - name: Ensure the ansible user is sudoer with no password required
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: "^ansible ALL\\="
+      line: "ansible ALL=(ALL) NOPASSWD:ALL"
+      validate: "visudo -cf %s"

@@ -7,7 +7,40 @@
 172.24.1.155
 
 [docker]
-172.24.1.154
+dockermanager ansible_host=192.168.176.128
+nginxubuntu ansible_host=192.168.176.131
 
 [django]
 172.24.1.150
+
+[kubernetes]
+k8smaster ansible_host=172.30.1.173
+k8snode1 ansible_host=172.30.1.174
+k8snode2 ansible_host=172.30.1.175
+
+[python3host]
+192.168.176.131
+
+[ubuntu]
+nginxubuntu ansible_host=192.168.176.132
+
+[centos]
+nginxserver ansible_host=192.168.176.134
+
+[webserver]
+nginxserver ansible_host=192.168.176.134
+nginxubuntu ansible_host=192.168.176.132
+
+[python3host:vars]
+ansible_python_interpreter=/usr/bin/python3
+
+[git]
+gitserver ansible_host=172.30.1.155
+
+[mysql]
+mysql ansible_host=172.30.1.130
+
+[all:vars]
+ansible_ssh_user=ansible
+ansible_ssh_private_key_file=/home/ansible/.ssh/id_rsa.pub
+

@@ -1,0 +1,20 @@
+---
+- hosts: "{{ hostname }}"
+  remote_user: fale
+  #usage : ansible-playbook setup_apache.yaml --extra-vars="hostname=nginxserver"
+  tasks:
+  - name: Ensure the HTTPd package is installed
+    package:
+      name: apache2
+      state: present
+    become: True
+  - name: Ensure the HTTPd service is enabled and running
+    service:
+      name: apache2
+      state: started
+      enabled: True
+    become: True
+
+    when:
+      - ansible_facts['distribution'] == "CentOS"
+      - ansible_facts['distribution_major_version'] == "6"

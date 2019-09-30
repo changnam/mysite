@@ -1,0 +1,10 @@
+- hosts: "{{ host }}"
+  become: true
+  vars_files:
+    - vars/vars.yaml
+  vars:
+    - ansible_user: "{{ crypt_ansible_user }}"
+    - ansible_ssh_pass: "{{ crypt_ansible_ssh_pass }}"
+    - ansible_become_pass: "{{ crypt_ansible_become_pass }}"
+  roles:
+     - { role: update_system }

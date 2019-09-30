@@ -1,4 +1,4 @@
-- hosts: all
+- hosts: "{{ hostname }}"
   gather_facts: false
   vars:
     ssh_key: '/root/.ssh/id_rsa.pub'

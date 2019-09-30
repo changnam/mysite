@@ -1,0 +1,23 @@
+- hosts: "{{ hostname }}"
+  gather_facts: false
+  become: true
+    #usage (ubuntu) : ansible-playbook user_setup_ubuntu.yaml -u ubuntu --ask-pass -c paramiko --become --ask-become-pass --extra-vars="hostname=192.168.176.131" -vvvv
+  tasks:
+
+    - name: Add ansible user to the sudoers
+      copy:
+        dest: "/etc/sudoers.d/ansible"
+        content: "ansible  ALL=(ALL)  NOPASSWD: ALL"
+
+    - name: Add a new user named ansible
+      user:
+        name: ansible
+        comment: ansible execution user
+        groups: sudo
+        append: yes
+
+    - name: Set up authorized keys for the ansible user
+      authorized_key: user=ansible key="{{item}}"
+      with_file:
+        - /home/ansible/.ssh/id_rsa.pub
+

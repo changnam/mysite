@@ -1,0 +1,3 @@
+---
+- name: include update_system
+  imports_tasks: update_system.yaml

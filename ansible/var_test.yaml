@@ -1,0 +1,8 @@
+---
+- hosts: all
+  user: ansible
+  become: True
+  tasks:
+    - name: variable test
+      debug:
+        msg: domainname is {{ domainname }}

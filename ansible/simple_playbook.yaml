@@ -1,0 +1,24 @@
+---
+- hosts: all
+  remote_user: ansible
+  sudo: yes
+  tasks:
+  - group:
+      name: devops
+      state: present
+  - name: create devops user with admin privileges
+    user:
+      name: devops
+      comment: "Devops User"
+      group: devops
+
+  - name: install htop package
+    action: apt name=htop state=present update_cache=yes
+
+- hosts: www
+  user: vagrant
+  sudo: yes
+  tasks:
+  - name: add official nginx repository
+    apt_repository:
+      repo: 'deb http://nginx.org/pack'

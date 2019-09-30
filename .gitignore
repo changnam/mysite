@@ -6,3 +6,5 @@ __pycache__
 /venvbash
 /docker/dockertext2
 /docker/.env
+/kubernetes/demo
+**/*.deb

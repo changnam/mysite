@@ -1,18 +1,17 @@
 - hosts: "{{ hostname }}"
   gather_facts: false
-  #usage : ansible-playbook user_setup.yaml --extra-vars="hostname=git"
+  become: true
+  remote_user: root
+  #usage (centos) : ansible-playbook user_setup.yaml -u root --ask-pass -c paramiko --extra-vars="hostname=192.168.119.130"
+  #usage (ubuntu) : ansible-playbook user_setup.yaml -u ubuntu --ask-pass -c paramiko --become --ask-become-pass --extra-vars="hostname=192.168.176.131" -vvvv
   tasks:
-    - name: Make sure we have a 'wheel' group
-      group:
-        name: wheel
-        state: present
 
-    - name: Allow 'wheel' group to have passwordless sudo
+    - name: Allow 'ansible' user to have passwordless sudo
       lineinfile:
         dest: /etc/sudoers
         state: present
-        regexp: '^%wheel'
-        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        regexp: '^%ansible'
+        line: '%ansible ALL=(ALL) NOPASSWD: ALL'
         validate: 'visudo -cf %s'
 
     - name: Add sudoers users to wheel group

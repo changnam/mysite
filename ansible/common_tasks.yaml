@@ -1,0 +1,81 @@
+---
+- hosts: all
+  user: ansible
+  become: TRUE
+  #usage: ansible-playbook -i 172.30.1.130, common_tasks.yaml --ask-become-pass
+  tasks:
+    - name: Ensure EPEL is enabled
+      yum:
+        name: epel-release
+        state: present
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+    - name: Ensure libselinux-python is present
+      yum:
+        name: libselinux-python
+        state: present
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+    - name: Ensure libsemanage-python is present
+      yum:
+        name: libsemanage-python
+        state: present
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+    - name: Ensure we have last version of every package
+      yum:
+        name: "*"
+        state: latest
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+    - name: Ensure we have last version of every package
+      apt:
+        name: "*"
+        state: latest
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: Ensure NTP is installed
+      yum:
+        name: ntp
+        state: present
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+    - name: Ensure NTP is installed
+      apt:
+        name: ntp
+        state: present
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: Ensure the timezone is set to UTC
+      file:
+        src: /usr/share/zoneinfo/GMT
+        dest: /etc/localtime
+        state: link
+
+    - name: Ensure the NTP service is stopped and disabled
+      systemd:
+        name: ntpd
+        state: stopped
+        enabled: False
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+    - name: Ensure the NTP service is stopped and disabled
+      service:
+        name: ntp
+        state: stopped
+        enabled: False
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+    - name: Ensure chrony is installed
+      yum:
+        name: chrony
+        state: present
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+    - name: Ensure chrony is installed
+      apt:
+        name: chrony
+        state: present
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+

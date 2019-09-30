@@ -1,0 +1,8 @@
+  - name: Update the system using apt
+    apt: update_cache=yes upgrade=full
+
+  - name: Clean packages no longer needed
+    apt: autoclean=yes autoremove=yes
+
+  - name: ls
+    shell: ls -l ~

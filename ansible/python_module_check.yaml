@@ -1,0 +1,14 @@
+- hosts: "{{ hostname }}"
+  gather_facts: false
+  become: true
+  #usage (ubuntu) : ansible-playbook python_module_check.yaml -u ubuntu --ask-pass -c paramiko --become --ask-become-pass --extra-vars="hostname=192.168.176.131" -vvvv
+  tasks:
+
+    - name: symlink /usr/bin/python -> /usr/bin/python3
+      raw: |
+        if [ -f /usr/bin/python3 ] && [ ! -f /usr/bin/python ]; then
+          ln --symbolic /usr/bin/python3 /usr/bin/python;
+        fi
+
+    - name: misc task on all instances
+      debug: var=ansible_host
