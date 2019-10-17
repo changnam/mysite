@@ -1,0 +1,13 @@
+---
+- hosts: all
+  user: ansible
+  become: True
+  gather_facts: False
+  #usage: ansible-playbook -i 172.30.1.173,172.30.1.175, firstrun_cloud.yaml --user ubuntu --ask-pass --ask-become-pass
+  tasks:
+  - debug:
+      msg: this is test
+  - name: Ensure ansible user exists
+    user:
+      name: ansible
+      state: present

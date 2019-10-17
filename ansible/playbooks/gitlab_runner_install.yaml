@@ -1,0 +1,53 @@
+---
+- hosts: all
+  user: ansible
+  become: true
+  #usage: ansible-playbook -i 172.30.1.130, gitlab_runner_install.yaml
+  tasks:
+    - name: Make sure destination dir exists
+      file:
+        path: ~/gitlab/
+        state: directory
+        recurse: yes
+
+    - name: add gltlab's offcial repositories in ubuntu
+      get_url:
+        url: https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh
+        dest: ~/gitlab/gitlab_runner.script.deb.sh
+        mode: 0755
+      when: ansible_os_family == "Debian"
+
+    - name: execute script.deb.sh script (ubuntu)
+      shell: ~/gitlab/gitlab_runner.script.deb.sh
+      register: repository_added
+      when: ansible_os_family == "Debian"
+
+    - name: add gltlab's offcial repositories in redhat
+      get_url:
+        url: https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.rpm.sh
+        dest: ~/gitlab/gitlab_runner.script.rpm.sh
+        mode: 0755
+      when: ansible_os_family == "RedHat"
+
+    - name: execute script.rpm.sh script (centos)
+      shell: ~/gitlab/gitlab_runner.script.rpm.sh
+      register: repository_added
+      when: ansible_os_family == "RedHat"
+
+    - name: install gitlab runner in ubuntu
+      apt:
+        name: gitlab-runner=12.2.0
+        state: present
+      register: package_install
+      when: ansible_os_family == "Debian"
+
+    - name: install gitlab runner in centos
+      yum:
+        name: gitlab-runner-12.2.0-1
+        state: present
+      register: package_install
+      when: ansible_os_family == "RedHat"
+
+    - name: print install message
+      debug:
+        msg: "{{ package_install}}"

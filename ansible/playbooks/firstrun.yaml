@@ -2,7 +2,8 @@
 - hosts: all
   user: root
   become: TRUE
-  #usage: ansible-playbook -i 172.30.1.173,172.30.1.175, firstrun.yaml --user ubuntu --ask-pass --ask-become-pass
+  gather_facts: False
+  #usage: ansible-playbook -i 172.30.1.173,172.30.1.175, firstrun.yaml --ask-pass --ask-become-pass -e "ansible_user=ubuntu"
   tasks:
   - name: Ensure ansible user exists
     user:

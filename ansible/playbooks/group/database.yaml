@@ -1,0 +1,7 @@
+---
+- hosts: "{{ hostname | default ('database') }}"
+  user: ansible
+  become: true
+  #usage: ansible-playbook -i 172.30.1.173, database.yaml -e "hostname=all"
+  roles:
+    - common

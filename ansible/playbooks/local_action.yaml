@@ -1,0 +1,40 @@
+---
+- hosts: all
+  user: ansible
+  become: True
+  #usage: ansible-playbook -i 192.168.176.132, local_action.yaml --ask-pass --ask-become-pass
+  tasks:
+    - name: Count process running on the remote system
+      shell: ps | wc -l
+      register: remote_processes_number
+    - name: Print remote running processes
+      debug:
+        msg: "{{ remote_processes_number.stdout}}"
+    - name: Count process running on the local system
+      #local_action: shell ps | wc -l
+      shell: ps | wc -l
+      delegate_to: localhost
+      register: local_processes_number
+    - name: Print local running processes
+      debug:
+        msg: "{{ local_processes_number.stdout }}"
+
+    - shell: uname -a
+      register: remote_uname
+
+    - debug:
+        var: remote_uname
+
+    - local_action: shell uname -a
+      register: local_uname
+
+    - debug:
+        var: local_uname
+
+    - name: update local file with remote system info
+      lineinfile:
+        dest: /home/ansible/test.txt # ~ 는 root user 의 home 임
+        state: present
+        regexp: "^remote process number"
+        line: "remote process number {{ remote_processes_number.stdout }} "
+      delegate_to: localhost

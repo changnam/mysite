@@ -1,0 +1,12 @@
+---
+- name: Ensure EPEL is enabled
+  yum:
+    name: epel-release
+    state: present
+  become: true
+
+- name: Ensure libselinux-python
+  yum:
+    name: libselinux-python
+    state: present
+  become: true

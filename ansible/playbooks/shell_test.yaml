@@ -1,0 +1,16 @@
+---
+- hosts: all
+  user: ansible
+  become: True
+  #usage: ansible-playbook -i 192.168.176.132, shell_test.yaml
+  tasks:
+    - name: shell module example
+      shell: ls -al
+      args:
+        chdir: ~
+        executable: /bin/bash
+      register: ls_output
+    - debug:
+        var: ls_output
+    - debug:
+        var: ansible_facts

@@ -8,3 +8,14 @@ __pycache__
 /docker/.env
 /kubernetes/demo
 **/*.deb
+**/*.tfstate
+**/*.tfstate.backup
+**/.terraform
+**/*.iml
+**/*.key
+**/*.crt
+**/*.csr
+**/credentials.json
+/kubernetes/config
+**/account.json
+/terraform/terraform-up-and-running-code

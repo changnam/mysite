@@ -1,0 +1,59 @@
+-- compute
+gcloud compute backend-services add-backend nginx-backend --instance-group nginx-group --instance-group-zone us-central1-a --global
+gcloud compute backend-services create nginx-backend --protocol HTTP --http-health-checks http-basic-check --global <-- create backend servie
+gcloud compute firewall-rules create privatenet-allow-icmp-ssh-rdp --direction=INGRESS --priority=1000 --network=privatenet --action=ALLOW --rules=icmp,tcp:22,tcp:3389 --source-ranges=0.0.0.0/0
+gcloud compute firewall-rules create www-firewall --allow tcp:80 <-- firewall rule 생성
+gcloud compute firewall-rules list --sort-by=NETWORK
+gcloud compute forwarding-rules create http-content-rule --global --target-http-proxy http-lb-proxy --ports 80
+gcloud compute forwarding-rules create nginx-lb --region us-central1 --ports=80 --target-pool nginx-pool <-- network loadb alancer 생성
+gcloud compute forwarding-rules list
+gcloud compute http-health-checks create http-basic-check <-- http load balancer health check
+gcloud compute instance-groups managed create nginx-group --base-instance-name nginx --size 2 --template nginx-template --target-pool nginx-pool <-- managed instance group 생성
+gcloud compute instance-groups managed set-named-ports nginx-group --named-ports http:80
+gcloud compute instance-templates create nginx-template --metadata-from-file startup-script=startup.sh <-- instance template 생성
+gcloud compute instances create example-instance  --metadata-from-file startup-script=./install.sh
+gcloud compute instances create example-instance --scopes storage-ro --metadata startup-script-url=gs://bucket/startupscript.sh
+gcloud compute instances create gcelab2 --machine-type n1-standard-2 --zone us-central1-c7
+gcloud compute instances create privatenet-us-vm --zone=us-central1-c --machine-type=n1-standard-1 --subnet=privatesubnet-us
+gcloud compute instances list
+gcloud compute networks create privatenet --subnet-mode=custom
+gcloud compute networks subnets create privatesubnet-us --network=privatenet --region=us-central1 --range=172.16.0.0/24
+gcloud compute networks subnets list --sort-by=NETWORK
+gcloud compute networks subnets list --network default
+gcloud compute project-info describe --project <your_project_ID> <-- --project 생략하면 현재 cloud shell default값
+gcloud compute ssh gcelab2 --zone us-central1-c <-- ssh key 만들고 전송함.
+gcloud compute target-http-proxies create http-lb-proxy --url-map web-map
+gcloud compute target-pools create nginx-pool <-- target pool 생성
+gcloud compute url-maps create web-map --default-service nginx-backend
+
+-- config
+gcloud auth list <-- gcp 에 authorized 된 계정들
+gcloud components list (현재 sdk 에 설치되어 있는 component 들을 보여준다)
+gcloud config configurations activate second
+gcloud config configurations list
+gcloud config list
+gcloud config list project <-- project 항목만 display
+gcloud config set compute/zone us-central1-a
+gcloud config set project second-2435
+gcloud info
+gcloud init
+gcloud projects list
+
+-- container
+gcloud container clusters create my-cluster <-- kubernetes cluster 생성
+gcloud container clusters delete [CLUSTER-NAME] <-- cluster 삭제
+gcloud container clusters get-credentials my-cluster <-- credential 가져오기
+
+-- iam
+gcloud  iam service-accounts create mysa    --description "second sa" --display-name "seconddis" <-- service account 생성
+gcloud auth activate-service-account --key-file credentials.json
+gcloud auth list <-- 하면 현재 gcloud 환경에서 authorized 된 계정들이 모두 보여진다. * 가 active 계정
+gcloud config set account `ACCOUNT` <-- active 계정을 바꾼다.
+gcloud config set project 'PROJ' <-- project 를 바꾼다.
+gcloud iam list-testable-permissions //cloudresourcemanager.googleapis.com/projects/$DEVSHELL_PROJECT_ID  project level 에 부여할 수 있는 모든 permissions 확인
+gcloud iam roles create editor --project $DEVSHELL_PROJECT_ID --file role-definition.yaml <-- custom role 생성
+gcloud iam roles describe editor --project $DEVSHELL_PROJECT_ID <-- custom role permission 확인
+gcloud iam roles describe roles/editor <-- predefined role 의 permission 확인
+gcloud iam roles list --project $DEVSHELL_PROJECT_ID <-- custom role listing
+gcloud iam roles list <-- pre defined role listing
+gcloud iam service-accounts list

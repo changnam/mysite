@@ -1,0 +1,132 @@
+---
+- hosts: "{{ hostname | default ('git') }}"
+  user: ansible
+  become: True
+  vars:
+    ce_version: "{{ ceversion | default (True) }}"
+  #usage: ansible-playbook -i hostsweb gitlab_install.yaml -e "hostname=all external_url=http://gittest.netsec.kr ceversion=false"
+  tasks:
+    - name: Print the ansible_os_family value
+      debug:
+        msg: "{{ ansible_os_family }}"
+
+    - name: Ensure the  gitlab package  dependencies are installed in ubuntu
+      apt:
+        name: ['curl', 'openssh-server', 'ca-certificates', 'debconf']
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Ensure the  gitlab package  dependencies are installed in centos
+      yum:
+        name: ['debconf']
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Set Postfix option hostname
+      debconf:
+        name=postifx
+        question="postfix/mailname"
+        value="sandbox"
+        vtype="string"
+
+    - name: Set Postfix option type as internet site
+      debconf:
+        name=postfix
+        question="postfix/main_mailer_type"
+        value="'Internet Site'"
+        vtype="string"
+
+    - name: Ensure the  gitlab package  dependencies are installed in RdeHat
+      yum:
+        name: postfix
+        state: present
+      when: ansible_os_family == "RedHat" and ce_version
+
+    - name: Ensure the  postfix package  dependencies are installed in ubuntu
+      apt:
+        name: postfix
+        state: present
+      when: ansible_os_family == "Debian" and ce_version
+
+    - name: Make sure destination dir exists
+      file:
+        path: ~/gitlab/
+        state: directory
+        recurse: yes
+
+    - name: add package repository in ubuntu (CE version)
+      get_url:
+        url: https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh
+        dest: ~/gitlab/gitlab_server.script.deb.sh
+        mode: 0755
+      when: ansible_os_family == "Debian" and ce_version
+
+    - name: add package repository in ubuntu (EE version)
+      get_url:
+        url: https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.deb.sh
+        dest: ~/gitlab/gitlab_server.script.deb.sh
+        mode: 0755
+      when: ansible_os_family == "Debian" and not ce_version
+
+    - name: execute script.deb.sh script (ubuntu)
+      shell: ~/gitlab/gitlab_server.script.deb.sh
+      register: repository_added
+      when: ansible_os_family == "Debian"
+
+    - name: add package repository in centos (CE version)
+      get_url:
+        url: https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh
+        dest: ~/gitlab/gitlab_server.script.rpm.sh
+        mode: 0755
+      when: ansible_os_family == "RedHat" and ce_version
+
+    - name: add package repository in centos (EE version)
+      get_url:
+        url: https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.rpm.sh
+        dest: ~/gitlab/gitlab_server.script.rpm.sh
+        mode: 0755
+      when: ansible_os_family == "RedHat" and not ce_version
+
+    - name: execute script.rpm.sh script (centos)
+      shell: ~/gitlab/gitlab_server.script.rpm.sh
+      register: repository_added
+      when: ansible_os_family == "RedHat"
+
+    - name: install gitlab ce in ubuntu
+      environment:
+        EXTERNAL_URL: "{{ external_url }}"
+      apt:
+        name: gitlab-ce=12.2.6-ce.0
+        state: present
+      register: package_install
+      when: ansible_os_family == "Debian" and ce_version
+
+    - name: install gitlab ee in ubuntu
+      environment:
+        EXTERNAL_URL: "{{ external_url }}"
+      apt:
+        name: gitlab-ee=12.2.6-ee.0
+        state: present
+      register: package_install
+      when: ansible_os_family == "Debian" and not ce_version
+
+    - name: install gitlab ce in centos
+      environment:
+        EXTERNAL_URL: "{{ external_url }}"
+      yum:
+        name: gitlab-ce-12.2.6-ce.0.el7.x86_64
+        state: present
+      register: package_install
+      when: ansible_os_family == "RedHat" and ce_version
+
+    - name: install gitlab ee in centos
+      environment:
+        EXTERNAL_URL: "{{ external_url }}"
+      apt:
+        name: gitlab-ee-12.2.6-ee.0.el7.x86_64
+        state: present
+      register: package_install
+      when: ansible_os_family == "RedHat" and not ce_version
+
+    - debug:
+        msg: "{{ repository_added }}  {{ package_install }}"

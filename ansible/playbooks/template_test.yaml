@@ -1,0 +1,13 @@
+---
+- hosts: all
+  user: root
+  become: true
+  # usage: ansible-playbook -i 172.30.1.173, template_test.yaml
+  tasks:
+    - name: template with different owner (become required)
+      template:
+        src: my_app.conf.j2
+        dest: /etc/my_app.conf
+        owner: root
+        group: root
+        mode: 0644

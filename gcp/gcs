@@ -1,0 +1,2 @@
+gsutil cp gs://bucket .
+gsutil ls gs://[YOUR_BUCKET_NAME]

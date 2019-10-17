@@ -1,3 +1,4 @@
 crypt_ansible_user: "ansible"
 crypt_ansible_ssh_pass: "P@ssw0rd"
 crypt_ansible_become_pass: "P@ssw0rd"
+backup_folder: "~"

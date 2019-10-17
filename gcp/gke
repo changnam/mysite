@@ -1,0 +1,94 @@
+kubectl api-resources
+kubectl autoscale deployment appserver --cpu-percent=40 --min=1 --max=5
+kubectl cluster-info
+kubectl cluster-info dump
+kubectl config get-contexts
+kubectl config set-cluster development
+kubectl config set-credentials demo-sa --token=$(kubectl get secret demo-sa-token-km5k4 -o jsonpath={.data.token} | base64 -d)
+kubectl config set-context sa-context --user=demo-sa --cluster=kubernetes
+kubectl config set-context myapp --cluster=gke --namespace=myapp <-- context 생성
+kubectl config unset users.<name> <-- config file 에서 user 를 삭제
+kubectl config use-context gke <-- context 변경
+kubectl config view
+kubectl create clusterrolebinding defaultclusterrole --clusterrole=view --serviceaccount=default:default [namespace:sa] --dry-run
+kubectl create -f pod-definition.yml
+kubectl create deployment nginx --image=nginx
+kubectl create namespace my-app
+kubectl create role list-pods --verb=get --verb=list --verb=watch --resource=pods <-- 현재의 namespace에 만들어진다.
+kubectl create rolebinding list-pods_demo-sa --role=list-pods --serviceaccount=default:default
+kubectl create service nodeport nginx --tcp=80:80 <-- service 의 selector 가 app=nginx 가된다. 유의
+kubectl create sa demo-sa
+kubectl delete -f pod-definition.yml
+kubectl delete node work1
+kubectl delete pod $(kubectl get pods | grep onlineshop | awk -F " " '{print $1}')
+kubectl describe deployment nginx
+kubectl describe pod -n kube-system -l component=kube-apiserver <- RBAC enable 여부 (authorization-mode=node,RBAC 으로 되어 있으면 enabled됨)
+kubectl describe pod -n kube-system -l component=kube-apiserver |grep encryption <-- encrytion at rest 적용 여부 체크 (etcd database 에 암호화 되어 저장됨. 복호화 하는 key는 kubernetes 만 가짐)
+kubectl describe pod myapp-pod
+kubectl describe pv task-pv-volume
+kubectl describe pvc hostpath
+kubectl diff -f deployment.yaml
+kubectl drain 123-worker <-- 점검을 위해 worker node 를 잠시 서비스 제외 (leave node)
+kubectl edit deployment.apps/nginx <- replica 개수 등 조정
+kubectl exec -it -n ingress-nginx nginx-ingress-controller-64f6f9bffb-dfv7z bash
+kubectl exec -it ddshop-64f6f9bffb-dfv7z -c ddshop-web bash <-- multiple containers
+kubectl explain deployment --recursive
+kubectl explain svc
+kubectl expose deploy/nginx --port 80 <-- 서비스생성 (clusterIP type)
+kubectl expose deployment hello-server --type="LoadBalancer" <-- 서비스 생성
+kubectl expose deployment nginx --type=LoadBalancer --name=nginx-service --port=80
+kubectl get all
+kubectl get componentstatuses  (k get cs)
+kubectl get deploy/ghost
+kubectl get deployments
+kubectl get deployments newdemo -o yaml --export > deployment.yaml <-- manisfest file 추출
+kubectl get endpoints
+kubectl get ingress
+kubectl get nodes
+kubectl get ns <-- name space
+kubectl get pods
+kubectl get pods --all-namespaces
+kubectl get pods --selector app=cockroachdb <-- label app=cockroachdb 인 것만 조회 (-l option동일)
+kubectl get pods --show-labels <-- 각 pods에 생성된 label 확인
+kubectl get pods -l 'env in (production, development)' <-- in 조건으로 조회
+kubectl get pods -l app=demo
+kubectl get pods -l app=nginx (label 이 app=nginx 인 pods 조회)
+kubectl get pods -n kube-system <-- namespace가 kube-system 만 조회(kube system 자체의 pods 만 조회)
+kubectl get pods -o wide
+kubectl get pv
+kubectl get pvc
+kubectl get rolebindings,clusterrolebindings --all-namespaces  -o custom-columns='KIND:kind,NAMESPACE:metadata.namespace,NAME:metadata.name,SERVICE_ACCOUNTS:subjects[?(@.kind=="ServiceAccount")].name' | grep "<SERVICE_ACCOUNT_NAME>"
+kubectl get sa default -o yaml
+kubectl get secret default-token-dffkj -o yaml
+kubectl get svc
+kubectl get svc/webserver -0 yaml <-- yaml 형태로 출력
+kubectl label pods foobar tier=frontend <-- label (key:value) 지정
+kubectl logs --namespace kube-system --tail=10 --follow etcd-docker-for-desktop <-- tail -f 와 같음
+kubectl logs -n kube-system --tail=20 kube-dns-autoscaler-69c5cbdcdd-94h7f
+kubectl logs -n kube-system -l component=kube-apiserver | grep "RBAC DENY" <-- api-server의 권한오류
+kubectl logs -n kube-system metrics-server    -c metrics-server-nanny  <-- pods 의 특정 컨터이너 로그
+kubectl logs pods/nginx-4222bdf4556
+kubectl patch pv <your-pv-name> -p '{"spec":{"persistentVolumeReclaimPolicy":"Retain"}}'
+kubectl port-forward deploy/demo 9999:8888 - deployment demo 에 대해서 port forwarding
+kubectl proxy <-- api endpoint 를 찾도록 proxy server 를 가동함, curl localhost:8001/foobar 를 사용하여 모든 api endpoint 를 확인 가능
+kubectl replace -f simpleservice.yml <-- manifest file 로 deployment 를 replace
+kubectl rollout history deployment sise
+kubectl rollout status deployment sise
+kubectl rollout undo deployment sise --to-revision=2
+kubectl run demo --image=cloudnatived/demo:hello --dry-run -o yaml   > deployment.yaml <-- yaml file 생성
+kubectl run foobar --image=nginx:l.13 --namespace fooba <-- ns fooba 에 생성
+kubectl run ghost --image=ghost:0.9  <-- run 명령은 deployment manifest 를 즉석 생성
+kubectl run hello-server --image=gcr.io/google-samples/hello-app:1.0 --port 8080 <-- app 배포
+kubectl run mysql --image=mysql:5.5 --env=MYSQL_ROOT_PASSWORD=P@ssw0rd
+kubectl run my-shell --rm -i --tty --image ubuntu -- bash <-- interactive shell 실행
+kubectl run nslookup --image=busybox:1.28 --rm -it --restart=Never --command -- nslookup demo <-- demo 라는 서비스를 클러스터내의 다른 컨테이너에서 dns 로 접속가능한지 테스트
+kubectl run wget --image=busybox:1.28 --rm -it --restart=Never --command -- wget -qO- http://demo:8888 <-- 클러스터내에서 dns 를 통한 http 접속 확인, 일회성 busybox 컨테이너사용
+kubectl scale --replicas=0 deploy/my-app && kubectl scale --replicas=1 deploy/my-app (imagepullpolicy  = always 로 되어 있어야)
+kubectl scale deployment fancyapp --replicas=3 <-- 자동으로 scale 함
+kubectl set image deployment/nginx mhausenblas/nginx:1.0.1 <-- deployment 이미지 변경
+kubectl taint nodes node-name key=value:taint-effect (NoSchedule,PreferNoSchedule,NoExecute)
+kubectl taint nodes node1 app=blue:NoSchedule
+kubectl uncordon 123-worker <-- worker node 를 다시 서비스 가능상태로
+kubectl version
+kubectt create serviceaccount myappsa
+kubectt describe secret myappsa-token-rr6jc
