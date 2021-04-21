@@ -1,0 +1,12 @@
+SELECT * FROM saeki.DP_CONR;
+select * from saeki.DP_CONR_COMP;
+select * from saeki.DP_CONR_SET;
+select * from information_schema.columns where upper(table_schema) like upper('%information_schema%') and upper(table_name) like upper('%tables%') order by table_schema,table_name,ordinal_position ;
+select * from information_schema.columns where upper(table_schema) like upper('%information_schema%') and upper(table_name) like upper('columns') order by table_schema,table_name,ordinal_position ;
+select * from information_schema.columns where upper(table_schema) like upper('%shoppingnt%') and upper(table_name) like upper('%pd_tbrand%') order by table_schema,table_name,ordinal_position;
+select * from information_schema.columns where upper(table_schema) like upper('%shoppingnt%') and upper(column_comment) like upper('%번호%') order by table_schema,table_name,ordinal_position;
+select * from SA_ADM;
+select * from VD_TENTERPRISE;
+desc information_schema.tables;
+select * from information_schema.tables where table_schema = 'shoppingnt';
+select * from information_schema.columns where table_schema = 'shoppingnt' order by table_schema,table_name,ordinal_position;
