@@ -1,3 +1,14 @@
+select concat(concat(concat(concat('alter table ',table_name),' rename to '),substr(table_name,1,length(table_name)-5)),';') from information_schema.tables where table_name like upper('DP%BKUP') order by table_name;
+select concat(concat('drop  table ',table_name),';') 
+  from information_schema.tables where table_name like upper('%_BK') order by table_name;
+
+create table CM_TCARDDT_BKUP like CM_TCARDDT;
+
+select * from information_schema.tables where upper(table_name) like upper('%tmd%') order by table_schema,table_name;
+ 
+select * from (select * from information_schema.tables where table_name like '%BK') a inner join information_schema.tables b
+on substr(a.table_name,1,length(a.table_name)-3) = b.table_name ;
+
 select table_schema as database_name,
     table_name
 from information_schema.tables

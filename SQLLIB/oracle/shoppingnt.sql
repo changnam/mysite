@@ -154,7 +154,7 @@ select * from dba_tab_columns where table_name = 'TBRAND' order by column_id;
 select a.table_name,b.table_name,a.column_name,b.column_name,a.column_id id,b.ordinal_position pos,a.data_type,b.data_type,a.data_length,b.character_maximum_length mlen,a.data_default,b.column_default,a.nullable,b.is_nullable,a.data_precision,a.data_scale,a.default_length
 ,b.numeric_precision,b.numeric_scale,b.column_comment
 from dba_tab_columns a full outer join mysql_columns b on a.table_name = substr(b.table_name,instr(b.table_name,'_')+1,length(b.table_name)) and a.column_name = b.column_name
-where a.table_name like upper('%tdescribe%') or b.table_name like upper('%tdescribe%')
+where a.table_name like upper('%TCATEGORYGOODS%') or b.table_name like upper('%TCATEGORYGOODS%')
 -- a.owner = 'BO_OWNER' and (a.table_name not like ('BATCH%') and a.table_name not like 'BIN%' and a.table_name not like 'IF%' and a.table_name not like 'MSA%' and a.table_name not like 'MMS%'
 --and a.table_name not like 'NEO%' and a.table_name not like 'SMS%' and a.table_name not like 'T3PL%') 
  order by a.table_name,a.column_id,b.table_name,b.ordinal_position;
@@ -219,12 +219,14 @@ select a.table_name,a.column_name,b.column_name,a.column_id,b.ordinal_position,a
 -- 인터페이스 테이블 비교
 select * from mysql_tables where upper(table_name) like upper('%describe%') order by table_name;
 select * from migtarget where upper(table_name) like upper('%describe%')  order by table_name;
+-- IF시작 테이블과 아닌 테이블간 컬럼 비교 (컬럼 이름이 IF 로 시작하지 않는것)
 select a.table_name,a.column_name,b.table_name,b.column_name,a.ordinal_position,b.ordinal_position,a.data_type,b.data_type from 
   (select * from mysql_columns where table_name like 'IF%') a full outer join (select * from mysql_columns where table_name not like 'IF%' ) b
    on substr(a.table_name,4,length(a.table_name)) = substr(b.table_name,5,length(b.table_name))
    and a.column_name = b.column_name
 --where a.table_name = 'IF_DESCRIBE' or b.table_name = 'PD_TDESCRIBE'
   where a.column_name not like 'IF%' and (a.column_name is null or b.column_name is null)
+    AND (a.table_name NOT LIKE '%_BK' and a.table_name NOT LIKE '%_R' AND a.table_name NOT LIKE '%_MST')
 order by a.table_name,a.ordinal_position,b.table_name,b.ordinal_position;
 select substr(table_name,5,length(table_name)),table_name from mysql_columns where table_name like 'CM%' order by table_name;
 
@@ -237,8 +239,17 @@ SELECT * FROM mysql_columns WHERE table_name LIKE 'IF_LOTTERYPROMOCUST%' ORDER B
 SELECT COLUMN_NAME,COLUMN_COMMENT,count(*) FROM MYSQL_COLUMNS WHERE COLUMN_NAME LIKE 'IF%' GROUP BY COLUMN_NAME,COLUMN_COMMENT ORDER BY COLUMN_NAME,COLUMN_COMMENT;
 SELECT * FROM dba_tab_columns WHERE table_name LIKE 'IF_BRAND%' ORDER BY table_name,column_id;
 -- set method
+TRUNCATE TABLE MYSQL_TABLES ;
+TRUNCATE TABLE MYSQL_COLUMNS ;
 select * from mysql_columns where table_name = 'DP_TCATEGORY_BKUP';
 select 'dpTcategoryBkup.set'||replace(initcap(lower(column_name)),'_')||'(tcategory.get'||replace(initcap(lower(column_name)),'_')||'());' from mysql_columns where table_name = 'DP_TCATEGORY_BKUP' order by ordinal_position;
 select 'pdTgoodsBkup.set'||replace(initcap(lower(column_name)),'_')||'(tgoods.get'||replace(initcap(lower(column_name)),'_')||'());' from mysql_columns where table_name = 'PD_TGOODS_BKUP' order by ordinal_position;
 select 'pdTgoodsdtBkup.set'||replace(initcap(lower(column_name)),'_')||'(tgoodsdt.get'||replace(initcap(lower(column_name)),'_')||'());' from mysql_columns where table_name = 'PD_TGOODSDT_BKUP' order by ordinal_position;
 select 'pdTofferBkup.set'||replace(initcap(lower(column_name)),'_')||'(toffer.get'||replace(initcap(lower(column_name)),'_')||'());' from mysql_columns where table_name = 'PD_TOFFER_BKUP' order by ordinal_position;
+select 'mkTpromomBkup.set'||replace(initcap(lower(column_name)),'_')||'(tpromom.get'||replace(initcap(lower(column_name)),'_')||'());' from mysql_columns where table_name = 'MK_TPROMOM_BKUP' order by ordinal_position;
+select 'mkTpromorefeatBkup.set'||replace(initcap(lower(column_name)),'_')||'(tpromorefeat.get'||replace(initcap(lower(column_name)),'_')||'());' from mysql_columns where table_name = 'MK_TPROMOREFEAT_BKUP' order by ordinal_position;
+select 'pdTgoodsaddinfoBkup.set'||replace(initcap(lower(column_name)),'_')||'(tgoodsaddinfo.get'||replace(initcap(lower(column_name)),'_')||'());' from mysql_columns where table_name = 'PD_TGOODSADDINFO_BKUP' order by ordinal_position;
+select 'pdTgoodsmodifierBkup.set'||replace(initcap(lower(column_name)),'_')||'(tgoodsmodifier.get'||replace(initcap(lower(column_name)),'_')||'());' from mysql_columns where table_name = 'PD_TGOODSMODIFIER_BKUP' order by ordinal_position;
+select 'pdTgoodsshareBkup.set'||replace(initcap(lower(column_name)),'_')||'(tgoodsshare.get'||replace(initcap(lower(column_name)),'_')||'());' from mysql_columns where table_name = 'PD_TGOODSSHARE_BKUP' order by ordinal_position;
+select 'pdTgoodsvodBkup.set'||replace(initcap(lower(column_name)),'_')||'(tgoodsvod.get'||replace(initcap(lower(column_name)),'_')||'());' from mysql_columns where table_name = 'PD_TGOODSVOD_BKUP' order by ordinal_position;
+select 'dpTcategorygoodsBkup.set'||replace(initcap(lower(column_name)),'_')||'(tcategorygoods.get'||replace(initcap(lower(column_name)),'_')||'());' from mysql_columns where table_name = 'DP_TCATEGORYGOODS_BKUP' order by ordinal_position;
