@@ -1,0 +1,19 @@
+CREATE DEFINER=`root`@`localhost` FUNCTION `FN_CD_NM_IF`(
+ P_CD_GRP    VARCHAR(5), -- 코드그룹
+
+    P_CD        VARCHAR(10) -- 코드
+
+) RETURNS varchar(100) CHARSET utf8
+    COMMENT '코드명 조회(IF)'
+BEGIN
+ DECLARE R_VAL VARCHAR(100);
+
+
+
+    SELECT CD_NM INTO R_VAL FROM CM_CD WHERE CD_GRP = P_CD_GRP AND CD = P_CD;
+
+
+
+    RETURN R_VAL;
+
+END
