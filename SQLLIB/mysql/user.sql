@@ -22,3 +22,18 @@ drop user 'nsuser2'@'%';
 select user() from dual;
 -- current database 조회
 select database() from dual;
+
+
+drop table user;
+create table users (username varchar(32), password varchar(512), enabled boolean);
+create table authorities (username varchar(32), authority varchar(32));
+
+truncate table users;
+select * From users;
+insert into users values('user','$2a$10$h3vXJ4sWHeAhGppQDgwWfulW4X3kdRVGdXo0PSktubfplTusM5gkG','1');
+insert into users values('global','$2a$10$h3vXJ4sWHeAhGppQDgwWfulW4X3kdRVGdXo0PSktubfplTusM5gkG','1');
+
+select * from authorities;
+truncate table authorities;
+insert into authorities values ('user','ROLE_USER');
+insert into authorities values ('global','ROLE_ADMIN');
