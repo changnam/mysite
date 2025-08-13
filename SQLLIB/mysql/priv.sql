@@ -7,3 +7,6 @@ select * from information_schema.schema_privileges where upper(grantee) like upp
 
 
 GRANT SELECT ON shoppingnt.PD_TBRAND_BKUP TO joe@localhost IDENTIFIED BY 'pass';
+
+grant all privileges on project9.* to 'project9user'@'%';
+grant all privileges on project9.* to 'project9user'@'localhost';

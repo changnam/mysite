@@ -1,0 +1,16 @@
+-- alter table bootlogs add primary key (seq);
+-- alter table bootlogs add (comments varchar(2048));
+-- drop table bootlogs; 
+-- truncate table bootlogs;
+-- create table bootlogs (seq bigint primary key , step_num int, step varchar(16),class_name varchar(2048), method_name varchar(64),hash_code bigint, caller_name varchar(2048),thread_name varchar(128),comments varchar(2048));
+select count(*) from bootlogs;
+select * from bootlogs where method_name regexp '.*' and thread_name regexp 'main' order by seq;
+select * from bootlogs where method_name not regexp 'load' order by seq;
+select * from bootlogs where method_name regexp '^AnnotationCacheOperationSource$' order by seq;
+select * from bootlogs where caller_name regexp 'backgroundpre' order by seq;
+select * from bootlogs where class_name regexp 'backgroundpre' order by seq;
+select * from bootlogs where seq between 616142 and 620000 and thread_name regexp '.*' and method_name regexp '.*' order by seq;
+select * from bootlogs where step_num between 20 and 30 and thread_name regexp 'main'  order by seq;
+select * from bootlogs where step regexp 'excep' order by seq;
+select class_name,method_name,count(*) from bootlogs group by class_name,method_name order by 3 desc;
+select class_name,count(*) from bootlogs group by class_name order by 2 desc;
