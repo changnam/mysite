@@ -1,0 +1,156 @@
+CREATE USER cddba1 IDENTIFIED BY cn0012;
+GRANT dba TO cddba1;
+CREATE public DATABASE link loanprot CONNECT TO N2LOAN identified BY "dongbubank0*" USING 'loanprot'; 
+
+SELECT * FROM CMM001TM@loanprot WHERE rownum < 10;
+
+-- 메뉴 목록
+CREATE TABLE menus AS 
+SELECT
+	/* [QueryID][Menu.selectLeftMenuList] */
+	LPAD(ROWNUM, 5, '0') AS SORT ,
+	PGM_PATH ,
+	SORT1 
+,
+	SORT2 ,
+	MENU_CD ,
+	UP_MENU_CD ,
+	MENU_NM ,
+	MENU_LVL ,
+	PGM_ID ,
+	EXPAND ,
+	LOGDB_YN ,
+	PGM_URL 
+--,
+--	PRG_HELP
+FROM
+	(
+	SELECT
+		PGM_PATH ,
+		SORT1 ,
+		SORT2 ,
+		MENU_CD ,
+		UP_MENU_CD ,
+		MENU_NM ,
+		MENU_LVL 
+,
+		PGM_ID ,
+		EXPAND ,
+		LOGDB_YN ,
+		PGM_URL ,
+		PRG_HELP
+	FROM
+		(
+		SELECT
+			SYS_CD AS PGM_PATH ,
+			VIEW_SEQ 
+AS SORT1 ,
+			1 AS SORT2 ,
+			SYS_CD AS MENU_CD ,
+			SYS_CD AS UP_MENU_CD ,
+			SYS_NM AS MENU_NM ,
+			'1' 
+AS MENU_LVL ,
+			'' AS PGM_ID ,
+			'' AS EXPAND ,
+			'N' AS LOGDB_YN ,
+			'' AS PGM_URL ,
+			'' AS PRG_HELP
+		FROM
+			CMM001TM@loanprot
+		WHERE
+			USE_YN = 'Y'
+			AND SYS_CD IN (
+			SELECT
+				M3.SYS_CD
+			FROM
+				CMM003V@loanprot M3
+			INNER JOIN 
+CMM014V@loanprot M14 ON
+				M14.PRG_SEQ = M3.PRG_SEQ
+			WHERE
+				M14.USER_ID = '0091019'
+				AND M3.PRG_TY = 'M' )
+	UNION ALL
+		SELECT
+			M3.SYS_CD AS PGM_PATH ,
+			M3.GRP_VIEW_SEQ AS SORT1 ,
+			0 AS SORT2 ,
+			M3.SYS_CD 
+|| LPAD(M3.GRP_SEQ, '4', '0') AS MENU_CD ,
+			M3.SYS_CD AS UP_MENU_CD ,
+			M3.GRP_NM AS MENU_NM ,
+			'2' AS MENU_LVL ,
+			'' AS PGM_ID ,
+			'N' AS EXPAND ,
+			'N' AS LOGDB_YN ,
+			'' AS PGM_URL ,
+			'' AS PRG_HELP
+		FROM
+			CMM003V@loanprot M3
+		INNER JOIN CMM014V@loanprot M14 ON
+			M14.PRG_SEQ = M3.PRG_SEQ
+		WHERE
+			M14.USER_ID = '0091019'
+			AND M3.PRG_TY = 'M'
+		GROUP BY
+			M3.SYS_CD ,
+			M3.GRP_VIEW_SEQ ,
+			M3.GRP_SEQ ,
+			M3.GRP_NM ,
+			M3.LOGDB_YN
+	UNION ALL
+		SELECT
+			M3.SYS_CD AS PGM_PATH ,
+			M3.GRP_VIEW_SEQ AS SORT1 ,
+			M3.PRG_VIEW_SEQ AS SORT2 
+,
+			M3.SYS_CD || LPAD(M3.GRP_SEQ, 4, '0') || SUBSTR(M3.PRG_ID, 4, 5) AS MENU_CD ,
+			M3.SYS_CD || LPAD(M3.GRP_SEQ, 4, '0') 
+AS UP_MENU_CD ,
+			M3.PRG_NM AS MENU_NM ,
+			'4' AS MENU_LVL ,
+			M3.PRG_URL AS PGM_ID ,
+			'N' AS EXPAND 
+,
+			M3.LOGDB_YN ,
+			M3.PRG_URL AS PGM_URL ,
+			'' AS PRG_HELP
+		FROM
+			CMM003V@loanprot M3
+		INNER JOIN CMM014V@loanprot M14 
+ON
+			M14.PRG_SEQ = M3.PRG_SEQ
+		WHERE
+			M14.USER_ID = '0091019'
+			AND M3.PRG_TY = 'M'
+		ORDER BY
+			MENU_NM 
+,
+			MENU_CD ,
+			MENU_LVL ,
+			UP_MENU_CD ) A
+	GROUP BY
+		PGM_PATH ,
+		SORT1 ,
+		SORT2 ,
+		MENU_CD ,
+		UP_MENU_CD 
+,
+		MENU_NM ,
+		MENU_LVL ,
+		PGM_ID ,
+		EXPAND ,
+		LOGDB_YN ,
+		PGM_URL ,
+		PRG_HELP
+	ORDER BY
+		SORT1 ,
+		SORT2 
+,
+		PGM_PATH ) ;
+		
+	
+	
+	SELECT * FROM menus;
+	CREATE public synonym menus FOR menus;

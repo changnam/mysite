@@ -1,0 +1,1 @@
+SELECT 'function '||name||'()'||'!-!'||'{'||'!-!'||' '||'!-!'||'}'  FROM tocreate ORDER BY 1;

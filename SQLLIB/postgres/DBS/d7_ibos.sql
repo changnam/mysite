@@ -1,0 +1,2 @@
+SELECT * FROM d7_ibos;
+SELECT * FROM d7_ibos WHERE REGEXP_LIKE(name,'') 
