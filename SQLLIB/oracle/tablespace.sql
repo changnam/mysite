@@ -3,3 +3,7 @@ select * from dba_data_files;
 drop user bo_owner cascade;
 create user bo_owner identified by bo_owner;
 grant dba to bo_owner;
+
+ALTER TABLESPACE TS_DATA
+ADD DATAFILE 'C:\oraclexe\app\oracle\oradata\xe\tsdata02.dbf'
+SIZE 1G;
